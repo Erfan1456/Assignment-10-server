@@ -16,6 +16,7 @@ import {
   getAllTips,
   getTipById,
 } from "./controllers/tipsController.js";
+import { createUser, getAllUsers } from "./controllers/usersController.js";
 const uri = process.env.MONGO_URL;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -33,11 +34,16 @@ async function run() {
     await client.connect();
 
     const usersTips = client.db("Assignment-10").collection("tips");
+    const users = client.db("Assignment-10").collection("users");
 
     // tips Crud Operations
     app.post("/tips", (req, res) => createTips(req, res, usersTips));
     app.get("/tips", (req, res) => getAllTips(req, res, usersTips));
     app.get("/tips/:id", (req, res) => getTipById(req, res, usersTips));
+
+    // users Crud Operations
+    app.post("/users", (req, res) => createUser(req, res, users));
+    app.get("/users", (req, res) => getAllUsers(req, res, users));
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
