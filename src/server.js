@@ -5,12 +5,17 @@ import dotenv from "dotenv";
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+dotenv.config();
 app.use(cors());
 app.use(express.json());
-dotenv.config();
 
 // MongoDB setup
 import { MongoClient, ServerApiVersion } from "mongodb";
+import {
+  createTips,
+  getAllTips,
+  getTipById,
+} from "./controllers/tipsController.js";
 const uri = process.env.MONGO_URL;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -26,6 +31,14 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const usersTips = client.db("Assignment-10").collection("tips");
+
+    // tips Crud Operations
+    app.post("/tips", (req, res) => createTips(req, res, usersTips));
+    app.get("/tips", (req, res) => getAllTips(req, res, usersTips));
+    app.get("/tips/:id", (req, res) => getTipById(req, res, usersTips));
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
@@ -33,7 +46,7 @@ async function run() {
     );
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
