@@ -17,6 +17,7 @@ import {
   getAllTips,
   getTipById,
   updateTip,
+  updateTipLikes,
 } from "./controllers/tipsController.js";
 import { createUser, getAllUsers } from "./controllers/usersController.js";
 const uri = process.env.MONGO_URL;
@@ -44,6 +45,7 @@ async function run() {
     app.get("/tips/:id", (req, res) => getTipById(req, res, usersTips));
     app.put("/tips/:id", (req, res) => updateTip(req, res, usersTips));
     app.delete("/tips/:id", (req, res) => deleteTip(req, res, usersTips));
+    app.patch("/tips/:id", (req, res) => updateTipLikes(req, res, usersTips));
 
     // users Crud Operations
     app.post("/users", (req, res) => createUser(req, res, users));

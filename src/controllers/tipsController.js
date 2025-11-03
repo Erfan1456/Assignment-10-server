@@ -73,3 +73,30 @@ export const deleteTip = async (req, res, usersTips) => {
     res.status(500).send({ message: "Failed to delete tip" });
   }
 };
+
+// Update the likes of a tip
+export const updateTipLikes = async (req, res, usersTips) => {
+  const tipId = req.params.id;
+  const { likes } = req.body; // new like count from frontend
+
+  if (likes === undefined) {
+    return res.status(400).send({ message: "Likes value is required" });
+  }
+
+  try {
+    const result = await usersTips.findOneAndUpdate(
+      { _id: new ObjectId(tipId) }, // filter by tip id
+      { $set: { likes: likes } }, // set the new likes value
+      { returnDocument: "after" } // return the updated document
+    );
+
+    if (!result.value) {
+      return res.status(404).send({ message: "Tip not found" });
+    }
+
+    res.status(200).send(result.value); // send updated tip
+  } catch (error) {
+    console.error("Error updating likes:", error);
+    res.status(500).send({ message: "Failed to update likes" });
+  }
+};
