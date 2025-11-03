@@ -4,6 +4,7 @@ export const createTips = async (req, res, usersTips) => {
   const newTip = {
     ...req.body,
     createdAt: new Date(), // add current timestamp
+    updatedAt: new Date(),
   };
 
   try {
