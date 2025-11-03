@@ -19,7 +19,11 @@ import {
   updateTip,
   updateTipLikes,
 } from "./controllers/tipsController.js";
-import { createUser, getAllUsers } from "./controllers/usersController.js";
+import {
+  createUser,
+  getActiveGardeners,
+  getAllUsers,
+} from "./controllers/usersController.js";
 const uri = process.env.MONGO_URL;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -50,6 +54,7 @@ async function run() {
     // users Crud Operations
     app.post("/users", (req, res) => createUser(req, res, users));
     app.get("/users", (req, res) => getAllUsers(req, res, users));
+    app.get("/activeUsers", (req, res) => getActiveGardeners(req, res, users));
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
