@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
 
+// Create a new tip
 export const createTips = async (req, res, usersTips) => {
   const newTip = {
     ...req.body,
@@ -16,13 +17,41 @@ export const createTips = async (req, res, usersTips) => {
   }
 };
 
+// Get all tips
 export const getAllTips = async (req, res, usersTips) => {
   const result = await usersTips.find().toArray();
   res.send(result);
 };
 
+// Get a tip by id
 export const getTipById = async (req, res, usersTips) => {
   const id = req.params.id;
   const result = await usersTips.findOne({ _id: new ObjectId(id) });
   res.send(result);
+};
+
+// Update a tip
+export const updateTip = async (req, res, usersTips) => {
+  const { id } = req.params;
+  const updatedData = {
+    ...req.body,
+    updatedAt: new Date(), // optional: track when the tip was updated
+  };
+
+  try {
+    const result = await usersTips.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updatedData }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send({ message: "Tip not found" });
+    }
+
+    const updatedTip = await usersTips.findOne({ _id: new ObjectId(id) });
+    res.status(200).send(updatedTip);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Failed to update tip" });
+  }
 };
