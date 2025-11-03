@@ -105,7 +105,7 @@ export const updateTipLikes = async (req, res, usersTips) => {
 export const getTrendingTips = async (req, res, usersTips) => {
   try {
     const activeGardeners = await usersTips
-      .find({ status: "Public" })
+      .find({ availability: "Public" })
       .limit(6)
       .toArray();
 
