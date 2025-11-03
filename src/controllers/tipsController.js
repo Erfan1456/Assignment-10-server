@@ -55,3 +55,21 @@ export const updateTip = async (req, res, usersTips) => {
     res.status(500).send({ message: "Failed to update tip" });
   }
 };
+
+// Delete a tip
+export const deleteTip = async (req, res, usersTips) => {
+  const id = req.params.id;
+
+  try {
+    const result = await usersTips.deleteOne({ _id: new ObjectId(id) });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).send({ message: "Tip not found" });
+    }
+
+    res.send(result); // contains deletedCount
+  } catch (error) {
+    console.error("Delete failed:", error);
+    res.status(500).send({ message: "Failed to delete tip" });
+  }
+};

@@ -13,6 +13,7 @@ app.use(express.json());
 import { MongoClient, ServerApiVersion } from "mongodb";
 import {
   createTips,
+  deleteTip,
   getAllTips,
   getTipById,
   updateTip,
@@ -42,6 +43,7 @@ async function run() {
     app.get("/tips", (req, res) => getAllTips(req, res, usersTips));
     app.get("/tips/:id", (req, res) => getTipById(req, res, usersTips));
     app.put("/tips/:id", (req, res) => updateTip(req, res, usersTips));
+    app.delete("/tips/:id", (req, res) => deleteTip(req, res, usersTips));
 
     // users Crud Operations
     app.post("/users", (req, res) => createUser(req, res, users));
