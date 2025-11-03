@@ -100,3 +100,18 @@ export const updateTipLikes = async (req, res, usersTips) => {
     res.status(500).send({ message: "Failed to update likes" });
   }
 };
+
+// Get trending tips
+export const getTrendingTips = async (req, res, usersTips) => {
+  try {
+    const activeGardeners = await usersTips
+      .find({ status: "Public" })
+      .limit(6)
+      .toArray();
+
+    res.status(200).send(activeGardeners);
+  } catch (error) {
+    console.error("Error fetching active gardeners:", error);
+    res.status(500).send({ message: "Failed to fetch active gardeners" });
+  }
+};

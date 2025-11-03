@@ -18,6 +18,7 @@ import {
   getTipById,
   updateTip,
   updateTipLikes,
+  getTrendingTips,
 } from "./controllers/tipsController.js";
 import {
   createUser,
@@ -47,6 +48,9 @@ async function run() {
     app.post("/tips", (req, res) => createTips(req, res, usersTips));
     app.get("/tips", (req, res) => getAllTips(req, res, usersTips));
     app.get("/tips/:id", (req, res) => getTipById(req, res, usersTips));
+    app.get("/trendingTips", (req, res) =>
+      getTrendingTips(req, res, usersTips)
+    );
     app.put("/tips/:id", (req, res) => updateTip(req, res, usersTips));
     app.delete("/tips/:id", (req, res) => deleteTip(req, res, usersTips));
     app.patch("/tips/:id", (req, res) => updateTipLikes(req, res, usersTips));
