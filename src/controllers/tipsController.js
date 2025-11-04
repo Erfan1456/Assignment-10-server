@@ -77,26 +77,23 @@ export const deleteTip = async (req, res, usersTips) => {
 // Update the likes of a tip
 export const updateTipLikes = async (req, res, usersTips) => {
   const tipId = req.params.id;
-  const { likes } = req.body; // new like count from frontend
+  const { likes } = req.body;
 
-  if (likes === undefined) {
-    return res.status(400).send({ message: "Likes value is required" });
-  }
+  if (!likes) return res.status(400).send({ message: "Likes required" });
 
   try {
     const result = await usersTips.findOneAndUpdate(
-      { _id: new ObjectId(tipId) }, // filter by tip id
-      { $set: { likes: likes } }, // set the new likes value
-      { returnDocument: "after" } // return the updated document
+      { _id: new ObjectId(tipId) },
+      { $set: { likes } },
+      { returnDocument: "after" }
     );
 
-    if (!result.value) {
+    if (!result.value)
       return res.status(404).send({ message: "Tip not found" });
-    }
 
-    res.status(200).send(result.value); // send updated tip
+    res.status(200).send(result.value);
   } catch (error) {
-    console.error("Error updating likes:", error);
+    console.error(error);
     res.status(500).send({ message: "Failed to update likes" });
   }
 };
@@ -105,9 +102,14 @@ export const updateTipLikes = async (req, res, usersTips) => {
 export const getTrendingTips = async (req, res, usersTips) => {
   try {
     const trendingTips = await usersTips
-      .find({ availability: "Public" }) // only show public tips
-      .sort({ likes: -1 }) // sort by likes (descending: highest first)
-      .limit(6) // only top 6
+      .aggregate([
+        { $match: { availability: "Public" } }, // only public tips
+        {
+          $addFields: { likesCount: { $size: { $ifNull: ["$likes", []] } } }, // calculate likes length
+        },
+        { $sort: { likesCount: -1 } }, // sort by likesCount descending
+        { $limit: 6 }, // take top 6
+      ])
       .toArray();
 
     res.status(200).send(trendingTips);
