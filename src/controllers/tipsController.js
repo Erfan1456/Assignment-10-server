@@ -104,14 +104,15 @@ export const updateTipLikes = async (req, res, usersTips) => {
 // Get trending tips
 export const getTrendingTips = async (req, res, usersTips) => {
   try {
-    const activeGardeners = await usersTips
-      .find({ availability: "Public" })
-      .limit(6)
+    const trendingTips = await usersTips
+      .find({ availability: "Public" }) // only show public tips
+      .sort({ likes: -1 }) // sort by likes (descending: highest first)
+      .limit(6) // only top 6
       .toArray();
 
-    res.status(200).send(activeGardeners);
+    res.status(200).send(trendingTips);
   } catch (error) {
-    console.error("Error fetching active gardeners:", error);
-    res.status(500).send({ message: "Failed to fetch active gardeners" });
+    console.error("Error fetching trending tips:", error);
+    res.status(500).send({ message: "Failed to fetch trending tips" });
   }
 };
